@@ -11,7 +11,7 @@ class Company(models.Model):
     location = models.CharField(max_length = 255 , null = True)
     phone_number = PhoneNumberField(null = False , blank = True ,unique = True)
     description = models.TextField(null = True)
-    email = models.EmailField(null = False , blank = True ,unique = True)
+    email = models.EmailField(null = False , blank = True)
     website = models.URLField(null = True , blank = True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)

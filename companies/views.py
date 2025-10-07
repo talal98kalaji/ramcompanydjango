@@ -4,9 +4,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from .models import Company
-from .serializers import CompanySerializer, CompanySignUpSerializer
+from .serializers import CompanySerializer, CompanySignUpSerializer ,CompanyTokenObtainPairSerializer
 from .permissions import IsOwnerOrReadOnly
-
 
 
 @api_view(['POST'])
@@ -17,6 +16,13 @@ def register_company(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def company_login(request):
+    serializer = CompanyTokenObtainPairSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)    
+    return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
