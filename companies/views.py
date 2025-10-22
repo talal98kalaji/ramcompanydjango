@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from .models import Company
-from .serializers import CompanySerializer, CompanySignUpSerializer ,CompanyTokenObtainPairSerializer
+from .serializers import CompanySerializer, CompanySignUpSerializer ,CompanyTokenObtainPairSerializer,ChangePasswordSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
@@ -77,3 +77,14 @@ def update_company(request):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    serializer = ChangePasswordSerializer(data = request.data , context = {"request" : request})
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"detail": "password updated successfuly"})
+    return Response(serializer.errors , status =status.HTTP_400_BAD_REQUEST)

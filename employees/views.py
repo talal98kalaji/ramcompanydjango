@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view , permission_classes
 from rest_framework.permissions import AllowAny , IsAdminUser , IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import EmployeeSignUpSerializer, EmploymentRequestSerializer,EmployeeSerializer,OnlyEmploymentRequestSerializer ,EmployeeTokenObtainPairSerializer 
+from .serializers import ChangePasswordSerializer,EmployeeSignUpSerializer, EmploymentRequestSerializer,EmployeeSerializer,OnlyEmploymentRequestSerializer ,EmployeeTokenObtainPairSerializer 
 from .models import Employee , EmploymentRequest
 from .permissions import IsSelfOrCompanyOrAdmin , IsCompanyOwner
 from companies.models import Company
@@ -75,6 +75,15 @@ def update_employee(request , employee_id):
         return Response(serializer.data , status = status.HTTP_200_OK)
     return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    serializer = ChangePasswordSerializer(data = request.data , context = {"request" :  request })
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"detail" : "Password has been updated successfully"})
+    return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
 @permission_classes([IsSelfOrCompanyOrAdmin])
@@ -139,9 +148,6 @@ def reject_employment_request(request , pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated]) 
 def create_employment_request(request):
-    """
-    [للموظف المسجل] لإنشاء طلب توظيف جديد لشركة أخرى.
-    """
     try:
         employee = request.user.employee_profile
     except Employee.DoesNotExist:

@@ -6,7 +6,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class CompanyTokenObtainPairSerializer(TokenObtainPairSerializer):
-
     default_error_messages = {
         'no_active_account': 'Invalid credentials provided. Please check username and password.'
     }
@@ -81,3 +80,25 @@ class CompanySignUpSerializer(serializers.ModelSerializer):
             user = User.objects.create_user(**user_data)
             company = Company.objects.create(owner=user, **validated_data)
             return company
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required = True , write_only = True)
+    new_password = serializers.CharField(required = True , write_only = True)
+    new_password2 = serializers.CharField(required = True , write_only = True)
+
+    def validate_old_password(self , value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Your old password incorrect")
+        return value
+
+    def validate(self , data):
+        if data['new_password'] != data['new_password2']:
+            raise serializers.ValidationError({"new_password    ":"Your Passwords not match"})
+        return data
+
+    def save(self , **kwargs):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
+        return user

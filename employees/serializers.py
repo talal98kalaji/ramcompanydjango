@@ -132,3 +132,26 @@ class OnlyEmploymentRequestSerializer(serializers.Serializer):
         if not Company.objects.filter(pk=value).exists():
             raise serializers.ValidationError("Company with this ID does not exist.")
         return value
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required = True , write_only = True)
+    new_password = serializers.CharField(required = True , write_only = True)
+    new_password2 = serializers.CharField(required = True , write_only = True)
+
+    def validate_old_password(self , value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Your Old Password incorrect")
+        return value
+
+    def validate(self , data):
+        if data['new_password'] != data['new_password2']:
+            raise serializers.ValidationError({"new_password" : "The Tow passwords not same"})
+        return data
+
+    def save(self , **kwargs):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
+        return user
