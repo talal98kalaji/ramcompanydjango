@@ -28,16 +28,6 @@ class EmployeeTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 
-class EmploymentRequestSerializer(serializers.ModelSerializer):
-    request_id = serializers.IntegerField(source='id', read_only=True)
-    employee_details = EmployeeSerializer(source='employee', read_only=True) 
-    company_name = serializers.CharField(source='company.name', read_only=True)
-    processed_by_username = serializers.CharField(source='processed_by.username', read_only=True, allow_null=True)
-
-    class Meta:
-        model = EmploymentRequest
-        fields = ['request_id', 'employee_details', 'company_name', 'submitted_code', 
-                  'status', 'created_at', 'processed_by_username']
 
 class EmployeeSignUpSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -159,3 +149,14 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save()
         return user
+
+class EmploymentRequestSerializer(serializers.ModelSerializer):
+    request_id = serializers.IntegerField(source='id', read_only=True)
+    employee_details = EmployeeSerializer(source='employee', read_only=True) 
+    company_name = serializers.CharField(source='company.name', read_only=True)
+    processed_by_username = serializers.CharField(source='processed_by.username', read_only=True, allow_null=True)
+
+    class Meta:
+        model = EmploymentRequest
+        fields = ['request_id', 'employee_details', 'company_name', 'submitted_code', 
+                  'status', 'created_at', 'processed_by_username']

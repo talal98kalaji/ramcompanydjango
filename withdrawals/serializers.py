@@ -3,13 +3,13 @@ from .models import Withdrawal
 
 class WithdrawalSerializer(serializers.ModelSerializer):
     withdrawal_id = serializers.IntegerField(source='id' ,read_only= True)
-    payslib_id = serializer.IntegerField(source = 'id' , read_only = True)
-    employee_id = serializers.CharField(source= payslip.salary_contract.employee.id ,read_only=True)
-    employee_name = serializers.CharField(source=payslib.salary_contract.employee.user.name , read_only= True)
+    payslib_id = serializers.IntegerField(source = 'id' , read_only = True)
+    employee_id = serializers.IntegerField(source='payslip.salary_contract.employee.id', read_only=True)
+    employee_username = serializers.CharField(source='payslip.salary_contract.employee.user.username', read_only=True)
     class Meta:
         model = Withdrawal
-        fields = ['withdrawal_id', 'payslib_id', 'employee_id', 'employee_name', 'amount','date']
-        read_only_fields = ['withdrawal_id', 'payslib_id', 'employee_id', 'employee_name']
+        fields = ['withdrawal_id', 'payslib_id', 'employee_id', 'employee_username', 'amount','date']
+        read_only_fields = ['withdrawal_id', 'payslib_id', 'employee_id', 'employee_username']
 
     def validate(self, data):
         payslip = data.get('payslip')
