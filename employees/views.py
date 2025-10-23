@@ -179,3 +179,18 @@ def create_employment_request(request):
         )
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def cancel_my_employment_request(request):
+    try:
+        employee = request.user.employee_profile
+    except Employee.DoesNotExist:
+        return Response({"detail": "Employee profile not found."}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        pending_request = EmploymentRequest.objects.get(employee=employee, status='pending')
+    except EmploymentRequest.DoesNotExist:
+        return Response({"detail": "You do not have any pending employment requests."}, status=status.HTTP_404_NOT_FOUND)
+    pending_request.delete()
+    return Response({"detail": "Your pending employment request has been successfully cancelled."}, status=status.HTTP_200_OK)

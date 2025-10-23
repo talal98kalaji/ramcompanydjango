@@ -8,7 +8,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['username', 'email', 'first_name', 'last_name']
 
 class EmployeeTokenObtainPairSerializer(TokenObtainPairSerializer):
 
@@ -26,6 +26,19 @@ class EmployeeTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 
+
+
+class EmploymentRequestSerializer(serializers.ModelSerializer):
+    request_id = serializers.IntegerField(source='id', read_only=True)
+    employee_details = EmployeeSerializer(source='employee', read_only=True) 
+    company_name = serializers.CharField(source='company.name', read_only=True)
+    processed_by_username = serializers.CharField(source='processed_by.username', read_only=True, allow_null=True)
+
+    class Meta:
+        model = EmploymentRequest
+        fields = ['request_id', 'employee_details', 'company_name', 'submitted_code', 
+                  'status', 'created_at', 'processed_by_username']
+
 class EmployeeSignUpSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
@@ -36,9 +49,6 @@ class EmployeeSignUpSerializer(serializers.Serializer):
     last_name = serializers.CharField(required=False, allow_blank=True)
     
     def validate(self, data):
-        """
-        A comprehensive validation function for employee sign-up.
-        """
         errors = {}
         if not data.get('username'):
             errors['username'] = 'This field may not be blank.'
@@ -85,20 +95,14 @@ class EmployeeSignUpSerializer(serializers.Serializer):
             return validated_data
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    company = serializers.StringRelatedField(read_only=True)
-    
+    user_details = UserSerializer(source='user', read_only=True)
+    company_name = serializers.CharField(source='company.name', read_only=True)
+    employee_id = serializers.IntegerField(source='id', read_only=True)
     class Meta:
         model = Employee
-        fields = ['id', 'user', 'company']
+        fields = ['employee_id', 'user_details', 'company_name', 'phone_number', 'is_active']
 
-class EmploymentRequestSerializer(serializers.ModelSerializer):
-    employee = EmployeeSerializer(read_only=True) 
-    company = serializers.StringRelatedField()
-    processed_by = serializers.StringRelatedField()
-    class Meta:
-        model = EmploymentRequest
-        fields = ['id', 'employee', 'company', 'submitted_code', 'status', 'created_at', 'processed_by']
+ 
 
 class EmployeeUpdateSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', required=False)

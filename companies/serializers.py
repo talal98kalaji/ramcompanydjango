@@ -21,11 +21,11 @@ class CompanyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class CompanySerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-
+    company_id = serializers.IntegerField(source='id', read_only=True)
     class Meta:
         model = Company
-        fields = ['id', 'owner', 'name', 'image', 'location', 'phone_number', 'description', 'email', 'website', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'owner', 'created_at', 'updated_at']
+        fields = ['company_id', 'owner', 'name', 'image', 'location', 'phone_number', 'description', 'email', 'website', 'created_at', 'updated_at']
+        read_only_fields = ['company_id', 'owner', 'created_at', 'updated_at']
 
 
 class CompanySignUpSerializer(serializers.ModelSerializer):
@@ -33,6 +33,7 @@ class CompanySignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
     email = serializers.EmailField(write_only=True)
+    name = serializers.CharField(required=True)
 
     class Meta:
         model = Company

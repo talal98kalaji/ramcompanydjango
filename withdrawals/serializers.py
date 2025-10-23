@@ -2,10 +2,14 @@ from rest_framework import serializers
 from .models import Withdrawal
 
 class WithdrawalSerializer(serializers.ModelSerializer):
+    withdrawal_id = serializers.IntegerField(source='id' ,read_only= True)
+    payslib_id = serializer.IntegerField(source = 'id' , read_only = True)
+    employee_id = serializers.CharField(source= payslip.salary_contract.employee.id ,read_only=True)
+    employee_name = serializers.CharField(source=payslib.salary_contract.employee.user.name , read_only= True)
     class Meta:
         model = Withdrawal
-        fields = ['id', 'payslip', 'amount','date']
-        read_only_fields = ['id', 'date']
+        fields = ['withdrawal_id', 'payslib_id', 'employee_id', 'employee_name', 'amount','date']
+        read_only_fields = ['withdrawal_id', 'payslib_id', 'employee_id', 'employee_name']
 
     def validate(self, data):
         payslip = data.get('payslip')

@@ -13,6 +13,6 @@ urlpatterns = [
     path('request/pending/' , views.list_pending_requests , name = 'pending-requests'),
     path('request/<int:pk>/accept/' , views.accept_employment_request , name = 'accept-request'),
     path('request/<int:pk>/reject/' , views.reject_employment_request , name = 'reject-request'),
-    path('request/creat/' ,  views.create_employment_request , name = "only-request-company")
-
+    path('request/creat/' ,  views.create_employment_request , name = "only-request-company"),
+    path('request/cancel/', views.cancel_my_employment_request, name='cancel-my-request'),
 ]
