@@ -30,10 +30,7 @@ class WithdrawalSerializer(serializers.ModelSerializer):
 
 
 class WithdrawalCreateSerializer(serializers.ModelSerializer):
-    """
-    Serializer لإنشاء طلب سحب جديد.
-    لا يتطلب إرسال كشف الراتب، حيث سيتم تحديده تلقائياً.
-    """
+
     class Meta:
         model = Withdrawal
         fields = ['amount']
