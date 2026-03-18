@@ -11,7 +11,7 @@ class SalaryContract(models.Model):
     yearly_salary = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     withdraw_allowed_percentage = models.PositiveIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(100)],
-        help_text="النسبة المئوية من الراتب الشهري المسموح بسحبها"
+        help_text="Percantage that allowed to"
     )
     
     @property
@@ -33,7 +33,7 @@ class SalaryContract(models.Model):
                 )
 
     def __str__(self):
-        return f"عقد راتب لـ {self.employee.user.username}"
+        return f"Monthly Payslib to {self.employee.user.username}"
 
 
 class MonthlyPayslip(models.Model):
