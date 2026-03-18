@@ -12,14 +12,11 @@ from .serializers import (
 )
 from employees.permissions import IsCompanyOwner
 
-# واجهات خاصة بعقود الرواتب (SalaryContract) 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
 def salary_contract_list(request):
-    """
-    [GET] لعرض قائمة بكل عقود الرواتب في شركة المدير الحالي.
-    """
+
     company = request.user.company_profile
     contracts = SalaryContract.objects.filter(company=company)
     serializer = SalaryContractDetailSerializer(contracts, many=True)
@@ -28,9 +25,6 @@ def salary_contract_list(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
 def salary_contract_create(request):
-    """
-    [POST] لإنشاء عقد راتب جديد لموظف في الشركة.
-    """
     serializer = SalaryContractSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         serializer.save()
@@ -40,13 +34,10 @@ def salary_contract_create(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
 def salary_contract_detail(request, pk):
-    """
-    [GET] عرض تفاصيل عقد راتب معين.
-    """
     try:
         contract = SalaryContract.objects.get(pk=pk, company=request.user.company_profile)
     except SalaryContract.DoesNotExist:
-        return Response({"detail": "عقد الراتب غير موجود أو لا ينتمي لشركتك."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"detail": "There No Salary has This ID"}, status=status.HTTP_404_NOT_FOUND)
     
     serializer = SalaryContractDetailSerializer(contract)
     return Response(serializer.data)
@@ -54,13 +45,10 @@ def salary_contract_detail(request, pk):
 @api_view(['PUT', 'PATCH'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
 def salary_contract_update(request, pk):
-    """
-    [PUT/PATCH] تعديل عقد راتب معين.
-    """
     try:
         contract = SalaryContract.objects.get(pk=pk, company=request.user.company_profile)
     except SalaryContract.DoesNotExist:
-        return Response({"detail": "عقد الراتب غير موجود أو لا ينتمي لشركتك."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"detail": "There No Contract has This ID"}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = SalaryContractSerializer(
         instance=contract,
@@ -73,35 +61,26 @@ def salary_contract_update(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# واجهات خاصة بكشوفات الرواتب الشهرية (MonthlyPayslip)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
 def monthly_payslip_detail(request, pk):
-    """
-    [GET] عرض تفاصيل كشف راتب شهري معين.
-    """
     try:
         payslip = MonthlyPayslip.objects.get(pk=pk, salary_contract__company=request.user.company_profile)
     except MonthlyPayslip.DoesNotExist:
-        return Response({"detail": "كشف الراتب غير موجود أو لا ينتمي لشركتك."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"detail": "There No Payslip has This ID."}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = MonthlyPayslipSerializer(payslip)
     return Response(serializer.data)
 
 
-# واجهات خاصة بحركات الراتب (SalaryAdjustment)
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
 def add_salary_adjustment(request, payslip_pk):
-    """
-    [POST] إضافة حركة جديدة (حسم أو مكافأة) على كشف راتب شهري معين.
-    """
     try:
         payslip = MonthlyPayslip.objects.get(pk=payslip_pk, salary_contract__company=request.user.company_profile)
     except MonthlyPayslip.DoesNotExist:
-        return Response({"detail": "كشف الراتب الذي تحاول التعديل عليه غير موجود."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"detail": "There No MonthlyPayslip has This ID"}, status=status.HTTP_404_NOT_FOUND)
     
     serializer = SalaryAdjustmentCreateSerializer(data=request.data)
     if serializer.is_valid():
