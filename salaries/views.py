@@ -73,8 +73,8 @@ def salary_contract_update(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# --- 2. واجهات خاصة بكشوفات الرواتب الشهرية (MonthlyPayslip) ---
-# (هذه الواجهة تبقى كما هي لأنها تخدم GET فقط)
+# واجهات خاصة بكشوفات الرواتب الشهرية (MonthlyPayslip)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
 def monthly_payslip_detail(request, pk):
