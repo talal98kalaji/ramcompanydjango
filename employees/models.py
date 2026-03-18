@@ -5,8 +5,6 @@ from companies.models import Company
 class Employee(models.Model):
     user = models.OneToOneField(User, related_name="employee_profile", on_delete=models.CASCADE)
     
-    # --- هذا هو التعديل الرئيسي ---
-    # نجعل الشركة اختيارية (يمكن أن تكون فارغة) حتى تتم الموافقة على الطلب
     company = models.ForeignKey(Company, related_name="employees", on_delete=models.SET_NULL, null=True, blank=True)
     
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
