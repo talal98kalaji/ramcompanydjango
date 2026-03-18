@@ -12,7 +12,7 @@ from .serializers import (
 )
 from employees.permissions import IsCompanyOwner
 
-# --- 1. واجهات خاصة بعقود الرواتب (SalaryContract) ---
+# واجهات خاصة بعقود الرواتب (SalaryContract) 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
@@ -90,8 +90,8 @@ def monthly_payslip_detail(request, pk):
     return Response(serializer.data)
 
 
-# --- 3. واجهات خاصة بحركات الراتب (SalaryAdjustment) ---
-# (هذه الواجهة تبقى كما هي لأنها تخدم POST فقط)
+# واجهات خاصة بحركات الراتب (SalaryAdjustment)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsCompanyOwner])
 def add_salary_adjustment(request, payslip_pk):
